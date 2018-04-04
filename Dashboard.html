@@ -773,7 +773,7 @@
 
       } else {
 
-        DataFrame.fromJSON('file://' + path3, true).then(
+        DataFrame.fromJSON('https://' + path3, true).then(
           df => {
 
             var new_col_df = df.restructure(colbox);
