@@ -622,473 +622,473 @@
             }
 
           });
-      } else if (file_name == Json2) {
-
-        DataFrame.fromJSON('https://' + path2, true, true).then(
-          df => {
-
-            var new_col_df = df.restructure(colbox);
-            console.log(new_col_df.show());
-
-            var val_s = [];
-            var val_n = [];
-
-            for (var g = 0; g < colbox.length; g++) {
-              var dis = df.distinct(colbox[g])
-              var arrc = dis.toArray();
-              for (var s of arrc) {
-                for (var v of s) {
-                  if (typeof(v) === 'string') {
-                    val_s.push(v);
-                  } else {
-                    val_n.push(v);
-                  }
-                }
-              }
-            }
-
-            console.log(val_s);
-            console.log(val_n);
-
-            var selected_data_string = [];
-            var selected_data_number = [];
-            var myMap1 = new Map();
-            var myMap2 = new Map();
-
-            for (var g = 0; g < colbox.length; g++) {
-              var t = df.toArray(colbox[g]);
-              for (var q of t) {
-                if (typeof(q) === 'string') {
-                  selected_data_string.push(t);
-                  break;
-                } else {
-                  selected_data_number.push(t);
-                  break;
-                }
-              }
-            }
-
-            console.log(selected_data_string);
-            console.log(selected_data_number);
-
-            if (val_s.length > 0) {
-
-              var v = selected_data_string[0];
-              for (var e = 1; e < selected_data_string.length; e++) {
-                Array.prototype.push.apply(v, selected_data_string[e]);
-              }
-
-
-              for (var j = 0; j < v.length; j++) {
-                if (myMap1.has(v[j])) {
-                  myMap1.set(v[j], myMap1.get(v[j]) + 1);
-                } else {
-                  var initalize = 1;
-                  myMap1.set(v[j], initalize);
-                }
-              }
-
-              console.log(myMap1);
-
-              var fil = document.querySelectorAll("[id='fil']"); //document.getElementsByClassName("test");
-              var nr_fil = fil.length;
-
-              var filter_check = [];
-
-              for (var j = 0; j < nr_fil; j++) {
-                if (fil[j].type == 'checkbox' && fil[j].checked == true) filter_check.push(fil[j].value);
-              }
-
-              //console.log(filter_check);
-
-              for (var q = 0; q < filter_check.length; q++) {
-                myMap1.delete(filter_check[q]);
-              }
-
-              console.log(myMap1);
-
-            }
-
-            if (val_n.length > 0) {
-
-              var n = selected_data_number[0];
-              for (var e = 1; e < selected_data_string.length; e++) {
-                Array.prototype.push.apply(n, selected_data_number[e]);
-              }
-
-              for (var j = 0; j < n.length; j++) {
-                if (myMap2.has(n[j])) {
-                  myMap2.set(n[j], myMap2.get(n[j]) + 1);
-                } else {
-                  var initalize = 1;
-                  myMap2.set(n[j], initalize);
-                }
-              }
-
-              console.log(myMap2);
-
-              //var con1 = document.querySelectorAll("[id='cond_num']");   //document.getElementsByClassName("test");
-              //var nr_con1 = con1.length;
-
-              var fil1 = document.querySelectorAll("[id='fil_num']");
-              //console.log(fil1);
-              var nr_fil1 = fil1.length;
-
-              var filter_check_num = [];
-
-              for (var j = 0; j < nr_fil1; j++) {
-                if (fil1[j].type == 'radio' && fil1[j].checked == true) filter_check_num.push(fil1[j].value);
-              }
-
-              var arr_ke = new Array();
-              for (var [key, value] of myMap2.entries()) {
-                arr_ke.push(key);
-              }
-
-              function isGreater(value) {
-                var co = document.querySelector('input[name="fil_num"]:checked').value;
-                return value >= co
-              }
-
-              function isLower(value) {
-                var co1 = document.querySelector('input[name="fil_num"]:checked').value;
-                return value <= co1
-              }
-
-
-              if (document.querySelector('input[name="cond_num"]:checked')) {
-                var cond_variable = document.querySelector('input[name="cond_num"]:checked').value;
-                console.log(cond_variable);
-
-                //["Greater than Equal to", "Less than Equal to","Equal to"]
-
-                var filtered_high;
-                var filtered_low;
-                if (cond_variable == "Greater than Equal to") {
-                  console.log("High");
-                  filtered_high = arr_ke.filter(isGreater);
-                  console.log(filtered_high);
-                  for (var i = 0; i < filtered_high.length; i++) {
-                    myMap2.delete(parseInt(filtered_high[i]));
-                  }
-
-
-                } else if (cond_variable == "Less than Equal to") {
-                  console.log("Low");
-                  filtered_low = arr_ke.filter(isLower);
-                  console.log(filtered_low);
-                  for (var i = 0; i < filtered_low.length; i++) {
-                    console.log(filtered_low[i]);
-                    myMap2.delete(parseInt(filtered_low[i]));
-                  }
-                } else {
-                  console.log("Equal");
-                  var eq1 = document.querySelector('input[name="fil_num"]:checked').value;
-                  myMap2.delete(parseInt(eq1));
-                }
-
-                //console.log(arr_ke);
-                console.log(myMap2);
-              }
-
-            }
-
-            var merged = new Map([...myMap1, ...myMap2])
-            console.log(merged);
-
-            var labels = [];
-            var data_points = [];
-            for (var [key, value] of merged.entries()) {
-              labels.push(key);
-              data_points.push(value);
-            }
-
-
-            for (var y = 0; y < selchbox.length; y++) {
-              if (selchbox[y] == 'Pie Chart') {
-                //console.log("1");
-                var chart_pie = new pie_chart(labels, data_points, document.getElementById("chart-area1").getContext("2d"));
-                chart_pie.create_settings();
-                chart_pie.drawChart();
-              } else if (selchbox[y] == 'Bar Chart') {
-                //console.log("2");
-                var chart_bar = new bar_chart(labels, data_points, document.getElementById("chart-area2").getContext("2d"));
-                chart_bar.create_settings();
-                chart_bar.drawChart();
-              } else if (selchbox[y] == 'Line Chart') {
-                //console.log("3");
-                var chart_line = new line_chart(labels, data_points, document.getElementById("chart-area3").getContext("2d"));
-                chart_line.create_settings();
-                chart_line.drawChart();
-              } else if (selchbox[y] == 'Stack Chart') {
-                //console.log("4");
-                var selected_data = [];
-                var data_stack_1 = [];
-                var data_stack_2 = [];
-
-                //var a = [1, 2, 3].map(function(x) x * 5);
-
-                for (var i = 0; i < data_points.length; i++) {
-                  data_stack_1[i] = data_points[i] * 2;
-                  data_stack_2[i] = data_points[i] * 3;
-                }
-
-                selected_data.push(data_points);
-                selected_data.push(data_stack_1);
-                selected_data.push(data_stack_2);
-
-                console.log(selected_data);
-
-                var chart_stack = new stack_chart(labels, selected_data, document.getElementById("chart-area4").getContext("2d"));
-                chart_stack.create_settings();
-                chart_stack.drawChart();
-              }
-            }
-
-          });
-
-      } else {
-
-        DataFrame.fromJSON('https://' + path3, true).then(
-          df => {
-
-            var new_col_df = df.restructure(colbox);
-            console.log(new_col_df.show());
-
-            var val_s = [];
-            var val_n = [];
-
-            for (var g = 0; g < colbox.length; g++) {
-              var dis = df.distinct(colbox[g])
-              var arrc = dis.toArray();
-              for (var s of arrc) {
-                for (var v of s) {
-                  if (typeof(v) === 'string') {
-                    val_s.push(v);
-                  } else {
-                    val_n.push(v);
-                  }
-                }
-              }
-            }
-
-            console.log(val_s);
-            console.log(val_n);
-
-            var selected_data_string = [];
-            var selected_data_number = [];
-            var myMap1 = new Map();
-            var myMap2 = new Map();
-
-            for (var g = 0; g < colbox.length; g++) {
-              var t = df.toArray(colbox[g]);
-              for (var q of t) {
-                if (typeof(q) === 'string') {
-                  selected_data_string.push(t);
-                  break;
-                } else {
-                  selected_data_number.push(t);
-                  break;
-                }
-              }
-            }
-
-            console.log(selected_data_string);
-            console.log(selected_data_number);
-
-            if (val_s.length > 0) {
-
-              var v = selected_data_string[0];
-              for (var e = 1; e < selected_data_string.length; e++) {
-                Array.prototype.push.apply(v, selected_data_string[e]);
-              }
-
-
-              for (var j = 0; j < v.length; j++) {
-                if (myMap1.has(v[j])) {
-                  myMap1.set(v[j], myMap1.get(v[j]) + 1);
-                } else {
-                  var initalize = 1;
-                  myMap1.set(v[j], initalize);
-                }
-              }
-
-              console.log(myMap1);
-
-              var fil = document.querySelectorAll("[id='fil']"); //document.getElementsByClassName("test");
-              var nr_fil = fil.length;
-
-              var filter_check = [];
-
-              for (var j = 0; j < nr_fil; j++) {
-                if (fil[j].type == 'checkbox' && fil[j].checked == true) filter_check.push(fil[j].value);
-              }
-
-              //console.log(filter_check);
-
-              for (var q = 0; q < filter_check.length; q++) {
-                myMap1.delete(filter_check[q]);
-              }
-
-              console.log(myMap1);
-
-            }
-
-            if (val_n.length > 0) {
-
-              var n = selected_data_number[0];
-              for (var e = 1; e < selected_data_string.length; e++) {
-                Array.prototype.push.apply(n, selected_data_number[e]);
-              }
-
-              for (var j = 0; j < n.length; j++) {
-                if (myMap2.has(n[j])) {
-                  myMap2.set(n[j], myMap2.get(n[j]) + 1);
-                } else {
-                  var initalize = 1;
-                  myMap2.set(n[j], initalize);
-                }
-              }
-
-              console.log(myMap2);
-
-              //var con1 = document.querySelectorAll("[id='cond_num']");   //document.getElementsByClassName("test");
-              //var nr_con1 = con1.length;
-
-              var fil1 = document.querySelectorAll("[id='fil_num']");
-              //console.log(fil1);
-              var nr_fil1 = fil1.length;
-
-              var filter_check_num = [];
-
-              for (var j = 0; j < nr_fil1; j++) {
-                if (fil1[j].type == 'radio' && fil1[j].checked == true) filter_check_num.push(fil1[j].value);
-              }
-
-              var arr_ke = new Array();
-              for (var [key, value] of myMap2.entries()) {
-                arr_ke.push(key);
-              }
-
-              function isGreater(value) {
-                var co = document.querySelector('input[name="fil_num"]:checked').value;
-                return value >= co
-              }
-
-              function isLower(value) {
-                var co1 = document.querySelector('input[name="fil_num"]:checked').value;
-                return value <= co1
-              }
-
-              if (document.querySelector('input[name="cond_num"]:checked')) {
-                var cond_variable = document.querySelector('input[name="cond_num"]:checked').value;
-                console.log(cond_variable);
-
-                //["Greater than Equal to", "Less than Equal to","Equal to"]
-
-                var filtered_high;
-                var filtered_low;
-                if (cond_variable == "Greater than Equal to") {
-                  console.log("High");
-                  filtered_high = arr_ke.filter(isGreater);
-                  console.log(filtered_high);
-                  for (var i = 0; i < filtered_high.length; i++) {
-                    myMap2.delete(parseInt(filtered_high[i]));
-                  }
-
-
-                } else if (cond_variable == "Less than Equal to") {
-                  console.log("Low");
-                  filtered_low = arr_ke.filter(isLower);
-                  console.log(filtered_low);
-                  for (var i = 0; i < filtered_low.length; i++) {
-                    console.log(filtered_low[i]);
-                    myMap2.delete(parseInt(filtered_low[i]));
-                  }
-                } else {
-                  console.log("Equal");
-                  var eq1 = document.querySelector('input[name="fil_num"]:checked').value;
-                  myMap2.delete(parseInt(eq1));
-                }
-
-                //console.log(arr_ke);
-                console.log(myMap2);
-              }
-            }
-
-            var merged = new Map([...myMap1, ...myMap2])
-            console.log(merged);
-
-            var labels = [];
-            var data_points = [];
-            for (var [key, value] of merged.entries()) {
-              labels.push(key);
-              data_points.push(value);
-            }
-
-
-            for (var y = 0; y < selchbox.length; y++) {
-              if (selchbox[y] == 'Pie Chart') {
-                //console.log("1");
-                var chart_pie = new pie_chart(labels, data_points, document.getElementById("chart-area1").getContext("2d"));
-                chart_pie.create_settings();
-                chart_pie.drawChart();
-              } else if (selchbox[y] == 'Bar Chart') {
-                //console.log("2");
-                var chart_bar = new bar_chart(labels, data_points, document.getElementById("chart-area2").getContext("2d"));
-                chart_bar.create_settings();
-                chart_bar.drawChart();
-
-              } else if (selchbox[y] == 'Line Chart') {
-                //console.log("3");
-                var chart_line = new line_chart(labels, data_points, document.getElementById("chart-area3").getContext("2d"));
-                chart_line.create_settings();
-                chart_line.drawChart();
-              } else if (selchbox[y] == 'Stack Chart') {
-                //console.log("4");
-                var selected_data = [];
-                var data_stack_1 = [];
-                var data_stack_2 = [];
-
-                //var a = [1, 2, 3].map(function(x) x * 5);
-
-                for (var i = 0; i < data_points.length; i++) {
-                  data_stack_1[i] = data_points[i] * 2;
-                  data_stack_2[i] = data_points[i] * 3;
-                }
-
-                selected_data.push(data_points);
-                selected_data.push(data_stack_1);
-                selected_data.push(data_stack_2);
-
-                console.log(selected_data);
-
-                var chart_stack = new stack_chart(labels, selected_data, document.getElementById("chart-area4").getContext("2d"));
-                chart_stack.create_settings();
-                chart_stack.drawChart();
-              }
-            }
-
-          });
-      }
-    }
-
-    function myFunction() {
-      var DataFrame = dfjs.DataFrame;
-      var file_name = document.getElementById("jsonFileInput").files[0].name;
-
-      if (file_name == Json1) {
-        var myBooks = data1;
-
-        var col = [];
-        for (var i = 0; i < myBooks.length; i++) {
-          for (var key in myBooks[i]) {
-            if (col.indexOf(key) === -1) {
-              col.push(key);
+} else if (file_name == Json2) {
+
+  DataFrame.fromJSON('https://' + path2, true, true).then(
+    df => {
+
+      var new_col_df = df.restructure(colbox);
+      console.log(new_col_df.show());
+
+      var val_s = [];
+      var val_n = [];
+
+      for (var g = 0; g < colbox.length; g++) {
+        var dis = df.distinct(colbox[g])
+        var arrc = dis.toArray();
+        for (var s of arrc) {
+          for (var v of s) {
+            if (typeof(v) === 'string') {
+              val_s.push(v);
+            } else {
+              val_n.push(v);
             }
           }
         }
-        var table = document.createElement("table");
+      }
+
+      console.log(val_s);
+      console.log(val_n);
+
+      var selected_data_string = [];
+      var selected_data_number = [];
+      var myMap1 = new Map();
+      var myMap2 = new Map();
+
+      for (var g = 0; g < colbox.length; g++) {
+        var t = df.toArray(colbox[g]);
+        for (var q of t) {
+          if (typeof(q) === 'string') {
+            selected_data_string.push(t);
+            break;
+          } else {
+            selected_data_number.push(t);
+            break;
+          }
+        }
+      }
+
+      console.log(selected_data_string);
+      console.log(selected_data_number);
+
+      if (val_s.length > 0) {
+
+        var v = selected_data_string[0];
+        for (var e = 1; e < selected_data_string.length; e++) {
+          Array.prototype.push.apply(v, selected_data_string[e]);
+        }
+
+
+        for (var j = 0; j < v.length; j++) {
+          if (myMap1.has(v[j])) {
+            myMap1.set(v[j], myMap1.get(v[j]) + 1);
+          } else {
+            var initalize = 1;
+            myMap1.set(v[j], initalize);
+          }
+        }
+
+        console.log(myMap1);
+
+              var fil = document.querySelectorAll("[id='fil']"); //document.getElementsByClassName("test");
+              var nr_fil = fil.length;
+
+              var filter_check = [];
+
+              for (var j = 0; j < nr_fil; j++) {
+                if (fil[j].type == 'checkbox' && fil[j].checked == true) filter_check.push(fil[j].value);
+              }
+
+              //console.log(filter_check);
+
+              for (var q = 0; q < filter_check.length; q++) {
+                myMap1.delete(filter_check[q]);
+              }
+
+              console.log(myMap1);
+
+            }
+
+            if (val_n.length > 0) {
+
+              var n = selected_data_number[0];
+              for (var e = 1; e < selected_data_string.length; e++) {
+                Array.prototype.push.apply(n, selected_data_number[e]);
+              }
+
+              for (var j = 0; j < n.length; j++) {
+                if (myMap2.has(n[j])) {
+                  myMap2.set(n[j], myMap2.get(n[j]) + 1);
+                } else {
+                  var initalize = 1;
+                  myMap2.set(n[j], initalize);
+                }
+              }
+
+              console.log(myMap2);
+
+              //var con1 = document.querySelectorAll("[id='cond_num']");   //document.getElementsByClassName("test");
+              //var nr_con1 = con1.length;
+
+              var fil1 = document.querySelectorAll("[id='fil_num']");
+              //console.log(fil1);
+              var nr_fil1 = fil1.length;
+
+              var filter_check_num = [];
+
+              for (var j = 0; j < nr_fil1; j++) {
+                if (fil1[j].type == 'radio' && fil1[j].checked == true) filter_check_num.push(fil1[j].value);
+              }
+
+              var arr_ke = new Array();
+              for (var [key, value] of myMap2.entries()) {
+                arr_ke.push(key);
+              }
+
+              function isGreater(value) {
+                var co = document.querySelector('input[name="fil_num"]:checked').value;
+                return value >= co
+              }
+
+              function isLower(value) {
+                var co1 = document.querySelector('input[name="fil_num"]:checked').value;
+                return value <= co1
+              }
+
+
+              if (document.querySelector('input[name="cond_num"]:checked')) {
+                var cond_variable = document.querySelector('input[name="cond_num"]:checked').value;
+                console.log(cond_variable);
+
+                //["Greater than Equal to", "Less than Equal to","Equal to"]
+
+                var filtered_high;
+                var filtered_low;
+                if (cond_variable == "Greater than Equal to") {
+                  console.log("High");
+                  filtered_high = arr_ke.filter(isGreater);
+                  console.log(filtered_high);
+                  for (var i = 0; i < filtered_high.length; i++) {
+                    myMap2.delete(parseInt(filtered_high[i]));
+                  }
+
+
+                } else if (cond_variable == "Less than Equal to") {
+                  console.log("Low");
+                  filtered_low = arr_ke.filter(isLower);
+                  console.log(filtered_low);
+                  for (var i = 0; i < filtered_low.length; i++) {
+                    console.log(filtered_low[i]);
+                    myMap2.delete(parseInt(filtered_low[i]));
+                  }
+                } else {
+                  console.log("Equal");
+                  var eq1 = document.querySelector('input[name="fil_num"]:checked').value;
+                  myMap2.delete(parseInt(eq1));
+                }
+
+                //console.log(arr_ke);
+                console.log(myMap2);
+              }
+
+            }
+
+            var merged = new Map([...myMap1, ...myMap2])
+            console.log(merged);
+
+            var labels = [];
+            var data_points = [];
+            for (var [key, value] of merged.entries()) {
+              labels.push(key);
+              data_points.push(value);
+            }
+
+
+            for (var y = 0; y < selchbox.length; y++) {
+              if (selchbox[y] == 'Pie Chart') {
+                //console.log("1");
+                var chart_pie = new pie_chart(labels, data_points, document.getElementById("chart-area1").getContext("2d"));
+                chart_pie.create_settings();
+                chart_pie.drawChart();
+              } else if (selchbox[y] == 'Bar Chart') {
+                //console.log("2");
+                var chart_bar = new bar_chart(labels, data_points, document.getElementById("chart-area2").getContext("2d"));
+                chart_bar.create_settings();
+                chart_bar.drawChart();
+              } else if (selchbox[y] == 'Line Chart') {
+                //console.log("3");
+                var chart_line = new line_chart(labels, data_points, document.getElementById("chart-area3").getContext("2d"));
+                chart_line.create_settings();
+                chart_line.drawChart();
+              } else if (selchbox[y] == 'Stack Chart') {
+                //console.log("4");
+                var selected_data = [];
+                var data_stack_1 = [];
+                var data_stack_2 = [];
+
+                //var a = [1, 2, 3].map(function(x) x * 5);
+
+                for (var i = 0; i < data_points.length; i++) {
+                  data_stack_1[i] = data_points[i] * 2;
+                  data_stack_2[i] = data_points[i] * 3;
+                }
+
+                selected_data.push(data_points);
+                selected_data.push(data_stack_1);
+                selected_data.push(data_stack_2);
+
+                console.log(selected_data);
+
+                var chart_stack = new stack_chart(labels, selected_data, document.getElementById("chart-area4").getContext("2d"));
+                chart_stack.create_settings();
+                chart_stack.drawChart();
+              }
+            }
+
+          });
+
+} else {
+
+  DataFrame.fromJSON('https://' + path3, true).then(
+    df => {
+
+      var new_col_df = df.restructure(colbox);
+      console.log(new_col_df.show());
+
+      var val_s = [];
+      var val_n = [];
+
+      for (var g = 0; g < colbox.length; g++) {
+        var dis = df.distinct(colbox[g])
+        var arrc = dis.toArray();
+        for (var s of arrc) {
+          for (var v of s) {
+            if (typeof(v) === 'string') {
+              val_s.push(v);
+            } else {
+              val_n.push(v);
+            }
+          }
+        }
+      }
+
+      console.log(val_s);
+      console.log(val_n);
+
+      var selected_data_string = [];
+      var selected_data_number = [];
+      var myMap1 = new Map();
+      var myMap2 = new Map();
+
+      for (var g = 0; g < colbox.length; g++) {
+        var t = df.toArray(colbox[g]);
+        for (var q of t) {
+          if (typeof(q) === 'string') {
+            selected_data_string.push(t);
+            break;
+          } else {
+            selected_data_number.push(t);
+            break;
+          }
+        }
+      }
+
+      console.log(selected_data_string);
+      console.log(selected_data_number);
+
+      if (val_s.length > 0) {
+
+        var v = selected_data_string[0];
+        for (var e = 1; e < selected_data_string.length; e++) {
+          Array.prototype.push.apply(v, selected_data_string[e]);
+        }
+
+
+        for (var j = 0; j < v.length; j++) {
+          if (myMap1.has(v[j])) {
+            myMap1.set(v[j], myMap1.get(v[j]) + 1);
+          } else {
+            var initalize = 1;
+            myMap1.set(v[j], initalize);
+          }
+        }
+
+        console.log(myMap1);
+
+              var fil = document.querySelectorAll("[id='fil']"); //document.getElementsByClassName("test");
+              var nr_fil = fil.length;
+
+              var filter_check = [];
+
+              for (var j = 0; j < nr_fil; j++) {
+                if (fil[j].type == 'checkbox' && fil[j].checked == true) filter_check.push(fil[j].value);
+              }
+
+              //console.log(filter_check);
+
+              for (var q = 0; q < filter_check.length; q++) {
+                myMap1.delete(filter_check[q]);
+              }
+
+              console.log(myMap1);
+
+            }
+
+            if (val_n.length > 0) {
+
+              var n = selected_data_number[0];
+              for (var e = 1; e < selected_data_string.length; e++) {
+                Array.prototype.push.apply(n, selected_data_number[e]);
+              }
+
+              for (var j = 0; j < n.length; j++) {
+                if (myMap2.has(n[j])) {
+                  myMap2.set(n[j], myMap2.get(n[j]) + 1);
+                } else {
+                  var initalize = 1;
+                  myMap2.set(n[j], initalize);
+                }
+              }
+
+              console.log(myMap2);
+
+              //var con1 = document.querySelectorAll("[id='cond_num']");   //document.getElementsByClassName("test");
+              //var nr_con1 = con1.length;
+
+              var fil1 = document.querySelectorAll("[id='fil_num']");
+              //console.log(fil1);
+              var nr_fil1 = fil1.length;
+
+              var filter_check_num = [];
+
+              for (var j = 0; j < nr_fil1; j++) {
+                if (fil1[j].type == 'radio' && fil1[j].checked == true) filter_check_num.push(fil1[j].value);
+              }
+
+              var arr_ke = new Array();
+              for (var [key, value] of myMap2.entries()) {
+                arr_ke.push(key);
+              }
+
+              function isGreater(value) {
+                var co = document.querySelector('input[name="fil_num"]:checked').value;
+                return value >= co
+              }
+
+              function isLower(value) {
+                var co1 = document.querySelector('input[name="fil_num"]:checked').value;
+                return value <= co1
+              }
+
+              if (document.querySelector('input[name="cond_num"]:checked')) {
+                var cond_variable = document.querySelector('input[name="cond_num"]:checked').value;
+                console.log(cond_variable);
+
+                //["Greater than Equal to", "Less than Equal to","Equal to"]
+
+                var filtered_high;
+                var filtered_low;
+                if (cond_variable == "Greater than Equal to") {
+                  console.log("High");
+                  filtered_high = arr_ke.filter(isGreater);
+                  console.log(filtered_high);
+                  for (var i = 0; i < filtered_high.length; i++) {
+                    myMap2.delete(parseInt(filtered_high[i]));
+                  }
+
+
+                } else if (cond_variable == "Less than Equal to") {
+                  console.log("Low");
+                  filtered_low = arr_ke.filter(isLower);
+                  console.log(filtered_low);
+                  for (var i = 0; i < filtered_low.length; i++) {
+                    console.log(filtered_low[i]);
+                    myMap2.delete(parseInt(filtered_low[i]));
+                  }
+                } else {
+                  console.log("Equal");
+                  var eq1 = document.querySelector('input[name="fil_num"]:checked').value;
+                  myMap2.delete(parseInt(eq1));
+                }
+
+                //console.log(arr_ke);
+                console.log(myMap2);
+              }
+            }
+
+            var merged = new Map([...myMap1, ...myMap2])
+            console.log(merged);
+
+            var labels = [];
+            var data_points = [];
+            for (var [key, value] of merged.entries()) {
+              labels.push(key);
+              data_points.push(value);
+            }
+
+
+            for (var y = 0; y < selchbox.length; y++) {
+              if (selchbox[y] == 'Pie Chart') {
+                //console.log("1");
+                var chart_pie = new pie_chart(labels, data_points, document.getElementById("chart-area1").getContext("2d"));
+                chart_pie.create_settings();
+                chart_pie.drawChart();
+              } else if (selchbox[y] == 'Bar Chart') {
+                //console.log("2");
+                var chart_bar = new bar_chart(labels, data_points, document.getElementById("chart-area2").getContext("2d"));
+                chart_bar.create_settings();
+                chart_bar.drawChart();
+
+              } else if (selchbox[y] == 'Line Chart') {
+                //console.log("3");
+                var chart_line = new line_chart(labels, data_points, document.getElementById("chart-area3").getContext("2d"));
+                chart_line.create_settings();
+                chart_line.drawChart();
+              } else if (selchbox[y] == 'Stack Chart') {
+                //console.log("4");
+                var selected_data = [];
+                var data_stack_1 = [];
+                var data_stack_2 = [];
+
+                //var a = [1, 2, 3].map(function(x) x * 5);
+
+                for (var i = 0; i < data_points.length; i++) {
+                  data_stack_1[i] = data_points[i] * 2;
+                  data_stack_2[i] = data_points[i] * 3;
+                }
+
+                selected_data.push(data_points);
+                selected_data.push(data_stack_1);
+                selected_data.push(data_stack_2);
+
+                console.log(selected_data);
+
+                var chart_stack = new stack_chart(labels, selected_data, document.getElementById("chart-area4").getContext("2d"));
+                chart_stack.create_settings();
+                chart_stack.drawChart();
+              }
+            }
+
+          });
+}
+}
+
+function myFunction() {
+  var DataFrame = dfjs.DataFrame;
+  var file_name = document.getElementById("jsonFileInput").files[0].name;
+
+  if (file_name == Json1) {
+    var myBooks = data1;
+
+    var col = [];
+    for (var i = 0; i < myBooks.length; i++) {
+      for (var key in myBooks[i]) {
+        if (col.indexOf(key) === -1) {
+          col.push(key);
+        }
+      }
+    }
+    var table = document.createElement("table");
 
         var tr = table.insertRow(-1); // TABLE ROW.
 
@@ -1420,41 +1420,41 @@
     }
   </script>
   <style type='text/css'>
-    body {
-      background-color: #FFFFFF;
-    }
+  body {
+    background-color: #FFFFFF;
+  }
 
-    #text {
-      width: 660px;
-      height: 300px;
-      border: 1px solid;
-      font-size: 20px;
-      overflow: scroll;
-      text-align: center;
-    }
+  #text {
+    width: 660px;
+    height: 300px;
+    border: 1px solid;
+    font-size: 20px;
+    overflow: scroll;
+    text-align: center;
+  }
 
-    table {
-      font-family: arial, sans-serif;
-      border-collapse: collapse;
-      width: 100%;
-    }
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
 
-    td,
-    th,
-    div {
-      border: 1px solid #dddddd;
-      text-align: center;
-      padding: 8px;
-    }
+  td,
+  th,
+  div {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+  }
 
-    tr:nth-child(even) {
-      background-color: #dddddd;
-    }
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
 
-    select {
-      width: 150px;
-    }
-  </style>
+  select {
+    width: 150px;
+  }
+</style>
 </head>
 
 <body>
@@ -1463,110 +1463,98 @@
   </div>
 
   <div>
-
     <p>Please Select the JSON Data Source</p>
-
-    <input type="file" id="jsonFileInput" onchange="myFunction()"
-            accept=".json">
-
+    <input type="file" id="jsonFileInput" onchange="myFunction()" accept=".json">
   </div>
 
   <div>
-
-  <button type="button" onClick="Refresh()">Refresh</button>
-
+    <button type="button" onClick="Refresh()">Refresh</button>
   </div>
 
-<div id="yes" style="overflow: scroll; border:1px solid black; width:800px; height:400px; margin:0 auto;">
-<table id="DataTable"></table>
+  <div id="yes" style="overflow: scroll; border:1px solid black; width:800px; height:400px; margin:0 auto;">
+    <table id="DataTable"></table>
   </div>
 
+  <div id="myDiv">
+    <p>Please Select the Data Labels(Columns)</p>
+  </div>
 
+  <div>
+    <button type="button" onClick="getFilter()">Add Filter</button>
+  </div>
 
-<div id="myDiv">
+  <div id="Filter">
+    <p>Please Select the Filters to Exclude (Categorical Values)</p>
+  </div>
 
-<p>Please Select the Data Labels(Columns)</p>
+  <br><br>
 
-</div>
-<div>
+  <div id="Filter_cond">
+    <p>Please Select the Filters Condition </p>
+  </div>
 
-<button type="button" onClick="getFilter()">Add Filter</button>
-</div>
-<div id="Filter">
+  <div id="Filter_number">
+    <p>Please Select the Value for the Filter Condition</p>
+  </div>
 
-<p>Please Select the Filters to Exclude (Categorical Values)</p>
+  <div id="charts">
+    <p>Please Select the Chart Type </p>
+  </div>
+  <br>
 
-</div>
+  <button type="button" onClick="getSelectedChbox()" style="width: 200px; h: 200px; float: right; margin-right: 600px;">Apply Charts</button>
 
-<br><br>
+  <br><br>
 
-<div id="Filter_cond">
+  <table class="columns", bgcolor="#dddddd">
+    <tr>
+      <td>
+        <div id="canvas-holder1" style="width:400px; margin:0 auto;">
+          <canvas id="chart-area1" />
+        </div>
+      </td>
+      <td>
+        <div id="piechart" style="width: 400px; height: 400px;"></div>
+      </td>
+    </tr>
 
-<p>Please Select the Filters Condition </p>
+    <br><br>
+    <tr>
+      <td>
+        <div id="canvas-holder2" style="width:400px; margin:0 auto;">
+          <canvas id="chart-area2" />
+        </div>
+      </td>
+      <td>
+        <div id="barchart" style="width: 400px; height: 400px;"></div>
+      </td>
+    </tr>
 
-</div>
+    <br><br>
 
-<div id="Filter_number">
+    <tr>
+      <td>
+        <div id="canvas-holder3" style="width:400px; margin:0 auto;">
+          <canvas id="chart-area3" />
+        </div>
+      </td>
+      <td>
+        <div id="linechart" style="width: 400px; height: 400px;"></div>
+      </td>
+    </tr>
 
-<p>Please Select the Value for the Filter Condition</p>
+    <br><br>
 
-</div>
-
-<div id="charts">
-
-<p>Please Select the Chart Type </p>
-
-
-
- </div>
-<br>
-
-<button type="button" onClick="getSelectedChbox()" style="width: 200px; h: 200px; float: right; margin-right: 600px;">Apply Charts</button>
-
-<br><br>
-
-
-				<table class="columns", bgcolor="#dddddd">
-				<tr>
-
-
-				<td><div id="canvas-holder1" style="width:400px; margin:0 auto;">
-                    <canvas id="chart-area1" />
-                </div>
-				<td><div id="piechart" style="width: 400px; height: 400px;"></div>
-				</tr>
-
-                <br><br>
-				<tr>
-                <td><div id="canvas-holder2" style="width:400px; margin:0 auto;">
-                    <canvas id="chart-area2" />
-                </div>
-				<td><div id="barchart" style="width: 400px; height: 400px;"></div>
-				</tr>
-
-                <br><br>
-
-				<tr>
-                <td><div id="canvas-holder3" style="width:400px; margin:0 auto;">
-                    <canvas id="chart-area3" />
-                </div>
-				<td><div id="linechart" style="width: 400px; height: 400px;"></div>
-				</tr>
-
-                <br><br>
-
-                <tr>
-				<td><div id="canvas-holder4" style="width:400px; margin:0 auto;">
-                    <canvas id="chart-area4" />
-                </div>
-				<td><div id="stackchart" style="width: 400px; height: 400px;"></div>
-				</tr>
-
-
-
-
-
-
+    <tr>
+      <td>
+        <div id="canvas-holder4" style="width:400px; margin:0 auto;">
+          <canvas id="chart-area4" />
+        </div>
+      </td>
+      <td>
+        <div id="stackchart" style="width: 400px; height: 400px;"></div>
+      </td>
+    </tr>
 
 
 </body>
