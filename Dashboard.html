@@ -5,6 +5,9 @@
   <script src="dataframe-min.js"></script>
   <script src="data.js"></script>
   <script src="uml.js"></script>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css" type = "text/css"/>
+  <link href="bootstrap-3.3.7-dist/css/customCSS.css" rel="stylesheet" type = "text/css"/>
   <script type="text/javascript" src="google-chart.bundle.js"></script>
 
   <script type="text/javascript" charset="utf-8">
@@ -35,7 +38,7 @@
 
       if (file_name == Json1) {
 
-        DataFrame.fromJSON('file://' + path1, true).then(
+        DataFrame.fromJSON('https://' + path1, true).then(
           df => {
 
             var new_col_df = df.restructure(colbox1);
@@ -104,7 +107,7 @@
 
           });
       } else if (file_name == Json2) {
-        DataFrame.fromJSON('file://' + path2, true).then(
+        DataFrame.fromJSON('https://' + path2, true).then(
           df => {
 
             var new_col_df = df.restructure(colbox1);
@@ -276,7 +279,7 @@
 
       if (file_name == Json1) {
 
-        DataFrame.fromJSON('file://' + path1, true).then(
+        DataFrame.fromJSON('https://' + path1, true).then(
           df => {
 
             //df = null;
@@ -548,7 +551,7 @@
           });
       } else if (file_name == Json2) {
 
-        DataFrame.fromJSON('file://' + path2, true, true).then(
+        DataFrame.fromJSON('https://' + path2, true, true).then(
           df => {
 
             var new_col_df = df.restructure(colbox);
@@ -1057,7 +1060,7 @@
           myDiv_charts.appendChild(label);
         }
 
-        DataFrame.fromJSON('file://' + path1, true).then(
+        DataFrame.fromJSON('https://' + path1, true).then(
           df => {
 
             var f = df.listColumns();
@@ -1142,7 +1145,7 @@
 
 
         //console.log("111111");
-        DataFrame.fromJSON('file://' + path2).then(
+        DataFrame.fromJSON('https://' + path2).then(
           df => {
 
             var f = df.listColumns();
