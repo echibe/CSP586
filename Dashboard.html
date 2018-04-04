@@ -14,9 +14,11 @@
     var path1 = "echibe.github.io/CSP586/Travelers.json";
     var path2 = "echibe.github.io/CSP586/Community.json";
     var path3 = "echibe.github.io/CSP586/Finance.json";
+    var path4 = "echibe.github.io/CSP586/Complaints.json";
     var Json1 = 'Travelers.json';
     var Json2 = 'Community.json';
     var Json3 = 'Finance.json';
+    var Json4 = 'Complaints.json';
 
     function Refresh() {
       window.parent.location = window.parent.location.href;
@@ -176,7 +178,78 @@
 
           });
 
-      } else {
+      } else if (file_name == Json4) {
+        DataFrame.fromJSON('https://' + path4, true).then(
+          df => {
+
+            var new_col_df = df.restructure(colbox1);
+            //console.log(new_col_df.show());
+
+            var val_s = [];
+            var val_n = [];
+
+            for (var g = 0; g < colbox1.length; g++) {
+              var dis = df.distinct(colbox1[g])
+              var arrc = dis.toArray();
+              for (var s of arrc) {
+                for (var v of s) {
+                  if (typeof(v) === 'string') {
+                    val_s.push(v);
+                  } else {
+                    val_n.push(v);
+                  }
+                }
+              }
+            }
+
+            var myDiv = document.getElementById("Filter"); //ilter_number
+            for (var k = 0; k < val_s.length; k++) {
+              var label = document.createElement("label");
+              var description = document.createTextNode(val_s[k]);
+              var checkbox = document.createElement("input");
+              checkbox.type = "checkbox";
+              checkbox.id = "fil"; // make the element a checkbox
+              checkbox.name = val_s[k]; // give it a name we can check on the server side
+              checkbox.value = val_s[k]; // make its value "pair"
+              label.appendChild(checkbox); // add the box to the element
+              label.appendChild(description); // add the description to the element
+              myDiv.appendChild(label);
+            }
+
+            //var cond = ["Greater than", "Less than","Equal to"];
+            var cond = ["Greater than Equal to", "Less than Equal to", "Equal to"];
+            var myDiv2 = document.getElementById("Filter_cond"); //ilter_number
+            for (var k = 0; k < cond.length; k++) {
+              var label = document.createElement("label");
+              var description = document.createTextNode(cond[k]);
+              var checkbox = document.createElement("input");
+              checkbox.type = "radio";
+              checkbox.id = "cond_num"; // make the element a checkbox
+              checkbox.name = "cond_num"; // give it a name we can check on the server side
+              checkbox.value = cond[k]; // make its value "pair"
+              label.appendChild(checkbox); // add the box to the element
+              label.appendChild(description); // add the description to the element
+              myDiv2.appendChild(label);
+            }
+
+            var myDiv1 = document.getElementById("Filter_number"); //ilter_number
+            for (var k = 0; k < val_n.length; k++) {
+              var label = document.createElement("label");
+              var description = document.createTextNode(val_n[k]);
+              var checkbox = document.createElement("input");
+              checkbox.type = "radio";
+              checkbox.id = "fil_num"; // make the element a checkbox
+              checkbox.name = "fil_num"; // give it a name we can check on the server side
+              checkbox.value = val_n[k]; // make its value "pair"
+              label.appendChild(checkbox); // add the box to the element
+              label.appendChild(description); // add the description to the element
+              myDiv1.appendChild(label);
+            }
+
+          });
+
+      }
+      else {
         DataFrame.fromJSON('https://' + path3, true).then(
           df => {
 
