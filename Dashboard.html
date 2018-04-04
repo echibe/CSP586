@@ -1299,29 +1299,25 @@
 </head>
 
 <body>
+  <div id="header">
+    <h1>Environmental Complaints Dashboard</h1>
+  </div>
 
   <div>
 
-    <p><b>Please Select the JSON Data Source</p>
+    <p>Please Select the JSON Data Source</p>
 
-<input type="file" id="jsonFileInput" onchange="myFunction()"
+    <input type="file" id="jsonFileInput" onchange="myFunction()"
             accept=".json">
 
-<!--<button type="button" onClick="window.location.reload()">Refresh</button>-->
+  </div>
 
-</div>
+  <div>
 
-<br><br>
+  <button type="button" onClick="Refresh()">Refresh</button>
 
-<div>
+  </div>
 
-<button type="button" onClick="Refresh()">Refresh</button>
-
-</div>
-
-<br><br>
-
-<br><br>
 <div id="yes" style="overflow: scroll; border:1px solid black; width:800px; height:400px; margin:0 auto;">
 <table id="DataTable"></table>
   </div>
@@ -1330,21 +1326,16 @@
 
 <div id="myDiv">
 
-<p><b>Please Select the Data Labels(Columns)</p>
+<p>Please Select the Data Labels(Columns)</p>
 
 </div>
+<div>
 
-<br><br>
-
-<br><br>
-
-<button type="button" onClick="getFilter()" style="width: 200px; h: 200px; float: right; margin-right: 600px;">Add Filter</button>
-
-<br><br>
-
+<button type="button" onClick="getFilter()">Add Filter</button>
+</div>
 <div id="Filter">
 
-<p><b> Please Select the Filters to Exclude (Categorical Values)</p>
+<p>Please Select the Filters to Exclude (Categorical Values)</p>
 
 </div>
 
@@ -1352,27 +1343,19 @@
 
 <div id="Filter_cond">
 
-<p><b> Please Select the Filters Condition </p>
+<p>Please Select the Filters Condition </p>
 
 </div>
 
 <div id="Filter_number">
 
-<p><b> Please Select the Value for the Filter Condition</p>
+<p>Please Select the Value for the Filter Condition</p>
 
 </div>
 
-<br><br>
-
-
-
-
-
-
-
 <div id="charts">
 
-<p><b> Please Select the Chart Type </p>
+<p>Please Select the Chart Type </p>
 
 
 
